@@ -1,0 +1,50 @@
+<html lang="en-GB">  
+    <head>
+        <title>Drift State Example</title>
+        <meta charset="utf-8">
+
+        <style>
+            .box {
+                float:left;
+                width: 100px;
+                height: 100px;
+                background-color: #ababab;
+                opacity: 1;
+                transition: opacity 1s linear;
+            }
+            .box.is-gone {
+                opacity: 0;
+                display: none;
+            }
+            .box.adrift {
+                display: block !important;
+            }
+            .btn {
+                float:left;
+                clear:left;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="box"></div>
+        <button class="btn">Toggle colour</button>
+
+        <script src="../../dist/index.js"></script>
+        <script>
+            (function() {
+
+                var box = document.querySelector(".box")
+                  , btn = document.querySelector(".btn");
+                
+                btn.addEventListener("click", function(evt) {
+                    window.driftState.go({
+                        el: box, property: "opacity"
+                    });
+                    box.classList.toggle("is-gone");
+                });
+
+            })();
+        </script>
+    </body>
+</html>

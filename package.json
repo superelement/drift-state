@@ -1,0 +1,38 @@
+{
+  "name": "drift-state",
+  "version": "1.0.0",
+  "description": "A small JS helper to give your CSS transitions a transitioning (aka drifting) state.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superelement/drift-state.git"
+  },
+  "keywords": [
+    "css",
+    "transition",
+    "drift",
+    "state",
+    "transitioning"
+  ],
+  "author": "Jim Doyle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/superelement/drift-state/issues"
+  },
+  "homepage": "https://github.com/superelement/drift-state#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.14.0",
+    "es6-promise": "^3.2.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-flatten": "^0.3.1",
+    "gulp-jasmine": "^2.4.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-watch": "^4.3.9",
+    "run-sequence": "^1.2.2"
+  }
+}

@@ -12,8 +12,10 @@ var instances = [];
 
 class DriftState {
 
-    constructor(el, property, cssState, cssNoState) {
+    constructor(el, property, cssState, cssNoState, stateTarget) {
+
         this.el = el;
+        this.stateTarget = stateTarget || el;
         
         this.property = property;
         if(this.property === "transform") this.property = getTransformName().css;
@@ -27,8 +29,8 @@ class DriftState {
         var canDrift = supportsTransitions();
         var el = this.el;
 
-        if( canDrift )  hanldeTransEnd(el, this.cssState, this.property)
-        else            el.classList.add(this.cssNoState);
+        if( canDrift )  hanldeTransEnd(el, this.stateTarget, this.cssState, this.property)
+        else            this.stateTarget.classList.add(this.cssNoState);
 
         // check the various CSS properties to see if a duration has been set
         var cl = ["transition-duration", "-moz-transition-duration", "-webkit-transition-duration", "-o-transition-duration"];
@@ -41,7 +43,7 @@ class DriftState {
 
         // if I have a duration then add the class
         if (duration !== 0) {
-            if( canDrift ) el.classList.add(this.cssState);
+            if( canDrift ) this.stateTarget.classList.add(this.cssState);
             el.offsetWidth; // check offsetWidth to force the style rendering
         };
     }
@@ -66,7 +68,7 @@ function whichTransitionEvent(){
     }
 }
 
-function hanldeTransEnd(el, cssState, property) {
+function hanldeTransEnd(el, stateTarget, cssState, property) {
     var evtFired = false;
 
 
@@ -74,7 +76,7 @@ function hanldeTransEnd(el, cssState, property) {
 
     var fun = function(evt){
 
-        console.log("evt.propertyName", evt.propertyName)
+        // console.log("evt.propertyName", evt.propertyName)
 
         // just triggers for one property type (if specified)
         if( property && evt.propertyName !== property ) return;
@@ -82,9 +84,9 @@ function hanldeTransEnd(el, cssState, property) {
         // stops multiple events triggering
         if(!evtFired) {
             evtFired = true;
-            el.classList.remove(cssState);
+            stateTarget.classList.remove(cssState);
 
-            console.log(NS, "trans end");
+            // console.log(NS, "trans end");
 
             el.removeEventListener(transitionEvent, fun);
         }
@@ -189,6 +191,7 @@ ds.go = function(opts) {
     // check opts are valid first
     if(!opts) err("go", "'opts' was not defined", opts);
     if(checkEl(opts)) err("go", "'opts.el' was not an HTMLElement", opts.el);
+    if(opts.stateTarget && checkEl(opts)) err("go", "'opts.stateTarget' was not an HTMLElement", opts.stateTarget);
     if(typeof opts.property !== "string") err("go", "'opts.property' was not a valid string", opts.property);
     
     if(typeof opts.cssState !== "string") {
@@ -203,7 +206,7 @@ ds.go = function(opts) {
             console.log(NS, "go", "No 'opts.cssNoState' given, so defaulting to " + DEF_NO_STATE_NAME + ".");
     }
 
-    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState);
+    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget);
     instances.push(inst);
 
     if(isBrowser) inst.go();

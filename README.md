@@ -2,6 +2,9 @@
 
 A small JS helper to give your CSS transitions a transitioning (aka drifting) state, with no additional library dependencies (like jQuery).
 
+## Work in progress
+This project works, but is still in early stages of development, so use with caution.
+
 ## Polyfills
 The library uses the following features, which you'll need to polyfill if not supported:
 - classList

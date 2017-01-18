@@ -19,6 +19,8 @@ class DriftState {
         
         this.property = property;
         if(this.property === "transform") this.property = getTransformName().css;
+
+        //if(isBrowser) console.log("getTransformName", getTransformName());
         
         this.cssState = cssState;
         this.cssNoState = cssNoState;
@@ -76,7 +78,7 @@ function hanldeTransEnd(el, stateTarget, cssState, property) {
 
     var fun = function(evt){
 
-        // console.log("evt.propertyName", evt.propertyName)
+        console.log("evt.propertyName", evt.propertyName)
 
         // just triggers for one property type (if specified)
         if( property && evt.propertyName !== property ) return;

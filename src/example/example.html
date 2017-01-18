@@ -10,40 +10,65 @@
                 height: 100px;
                 background-color: #ababab;
                 opacity: 1;
-                transition: opacity 1s linear;
+
+                transition: 0.5s linear;
+                transition-property: opacity, transform;
+                transform-origin: top center;
+
+                
+                transform: translateY(0%);
+                display: block;
+                
             }
+
+            .box.is-down {
+                transform: translateY(100px);
+                background-color: red;
+            }
+            
             .box.is-gone {
                 opacity: 0;
                 display: none;
             }
             .box.adrift {
                 display: block !important;
+                background-color: #ababab;
             }
             .btn {
                 float:left;
                 clear:left;
             }
+
+            
         </style>
     </head>
 
     <body>
         <div class="box"></div>
-        <button class="btn">Toggle colour</button>
+        <button class="btn1">Toggle opacity (then display:none)</button>
+        <button class="btn2">Toggle translateY (then change colour)</button>
 
         <script src="../../dist/index.js"></script>
         <script>
             (function() {
 
                 var box = document.querySelector(".box")
-                  , btn = document.querySelector(".btn");
+                  , btn1 = document.querySelector(".btn1")
+                  , btn2 = document.querySelector(".btn2");
                 
-                btn.addEventListener("click", function(evt) {
+                btn1.addEventListener("click", function(evt) {
                     window.driftState.go({
                         el: box, property: "opacity"
                     });
                     box.classList.toggle("is-gone");
                 });
 
+                btn2.addEventListener("click", function(evt) {
+                    window.driftState.go({
+                        el: box, property: "transform"
+                    });
+                    box.classList.toggle("is-down");
+                });
             })();
         </script>
     </body>

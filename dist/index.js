@@ -26,9 +26,7 @@ var DriftState = function () {
         this.stateTarget = stateTarget || el;
 
         this.property = property;
-        if (this.property === "transform") this.property = getTransformName().css;
-
-        //if(isBrowser) console.log("getTransformName", getTransformName());
+        if (this.property === "transform") this.property = getTransformName();
 
         this.cssState = cssState;
         this.cssNoState = cssNoState;
@@ -76,24 +74,46 @@ function whichTransitionEvent() {
         'WebkitTransition': 'webkitTransitionEnd'
     };
 
+    var allTrans = [];
+
     for (t in transitions) {
         if (el.style[t] !== undefined) {
-            return transitions[t];
+            allTrans.push(transitions[t]);
         }
     }
+
+    if (!allTrans.length) return null;
+    return allTrans;
+}
+
+// checks if the css property was found in the event. Transform property is an object, because it can have multiple names.
+function isPropertyFound(property, evt) {
+
+    if (typeof property === "string") {
+        // just triggers for one property type (if specified)
+        if (property && evt.propertyName !== property) return false;
+    } else if (Array.isArray(property)) {
+
+        var found = false;
+        property.forEach(function (obj) {
+            if (obj.css === evt.propertyName) found = true;
+        });
+
+        if (!found) return false;
+    }
+
+    return true;
 }
 
 function hanldeTransEnd(el, stateTarget, cssState, property) {
     var evtFired = false;
 
-    var transitionEvent = whichTransitionEvent();
+    var transitionEventList = whichTransitionEvent();
 
     var fun = function fun(evt) {
 
-        console.log("evt.propertyName", evt.propertyName);
-
-        // just triggers for one property type (if specified)
-        if (property && evt.propertyName !== property) return;
+        // if CSS property didn't exist in the event, ignore it
+        if (!isPropertyFound(property, evt)) return;
 
         // stops multiple events triggering
         if (!evtFired) {
@@ -102,10 +122,17 @@ function hanldeTransEnd(el, stateTarget, cssState, property) {
 
             // console.log(NS, "trans end");
 
-            el.removeEventListener(transitionEvent, fun);
+            transitionEventList.forEach(function (transitionEvent) {
+                el.removeEventListener(transitionEvent, fun);
+            });
         }
     };
-    transitionEvent && el.addEventListener(transitionEvent, fun, false);
+    if (transitionEventList) {
+        // console.log(NS, transitionEventList)
+        transitionEventList.forEach(function (transitionEvent) {
+            el.addEventListener(transitionEvent, fun, false);
+        });
+    }
 }
 
 // Checks if transitions are supported
@@ -135,41 +162,45 @@ function supportsTransitions() {
 function getTransformName() {
     var st = window.getComputedStyle(document.body, null);
 
-    var rtnObj = {
-        css: null, js: null
-    };
+    var transList = [];
 
     if (st.getPropertyValue("transform") !== null) {
-        rtnObj.css = "transform";
-        rtnObj.js = "transform";
-        return rtnObj;
+        transList.push({
+            css: "transform",
+            js: "transform"
+        });
     }
 
     if (st.getPropertyValue("-webkit-transform") !== null) {
-        rtnObj.css = "-webkit-transform";
-        rtnObj.js = "webkitTransform";
-        return rtnObj;
+        transList.push({
+            css: "-webkit-transform",
+            js: "webkitTransform"
+        });
     }
 
     if (st.getPropertyValue("-moz-transform") !== null) {
-        rtnObj.css = "-moz-transform";
-        rtnObj.js = "MozTransform";
-        return rtnObj;
+        transList.push({
+            css: "-moz-transform",
+            js: "MozTransform"
+        });
     }
 
     if (st.getPropertyValue("-ms-transform") !== null) {
-        rtnObj.css = "-ms-transform";
-        rtnObj.js = "msTransform";
-        return rtnObj;
+        transList.push({
+            css: "-ms-transform",
+            js: "msTransform"
+        });
     }
 
     if (st.getPropertyValue("-o-transform") !== null) {
-        rtnObj.css = "-o-transform";
-        rtnObj.js = "OTransform";
-        return rtnObj;
+        transList.push({
+            css: "-o-transform",
+            js: "OTransform"
+        });
     }
 
-    return null;
+    if (!transList.length) return null;
+    return transList;
 }
 
 /**

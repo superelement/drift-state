@@ -12,7 +12,7 @@ var instances = [];
 
 class DriftState {
 
-    constructor(el, property, cssState, cssNoState, stateTarget) {
+    constructor(el, property, cssState, cssNoState, stateTarget, transitionEndCB) {
 
         this.el = el;
         this.stateTarget = stateTarget || el;
@@ -23,13 +23,14 @@ class DriftState {
         this.cssState = cssState;
         this.cssNoState = cssNoState;
         this.uid = getUID();
+        this.transitionEndCB = transitionEndCB;
     }
 
     go() {
         var canDrift = supportsTransitions();
         var el = this.el;
 
-        if( canDrift )  hanldeTransEnd(el, this.stateTarget, this.cssState, this.property)
+        if( canDrift )  hanldeTransEnd(el, this.stateTarget, this.cssState, this.property, this.transitionEndCB)
         else            this.stateTarget.classList.add(this.cssNoState);
 
         // check the various CSS properties to see if a duration has been set
@@ -92,7 +93,7 @@ function isPropertyFound(property, evt) {
     return true;
 }
 
-function hanldeTransEnd(el, stateTarget, cssState, property) {
+function hanldeTransEnd(el, stateTarget, cssState, property, transitionEndCB) {
     var evtFired = false;
 
     var transitionEventList = whichTransitionEvent();
@@ -112,6 +113,8 @@ function hanldeTransEnd(el, stateTarget, cssState, property) {
             transitionEventList.forEach(function(transitionEvent) {
               el.removeEventListener(transitionEvent, fun);
             });
+
+            if(transitionEndCB) transitionEndCB(el, stateTarget, cssState, property);
         }
     };
     if(transitionEventList){
@@ -238,7 +241,7 @@ ds.go = function(opts) {
             console.log(NS, "go", "No 'opts.cssNoState' given, so defaulting to " + DEF_NO_STATE_NAME + ".");
     }
 
-    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget);
+    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB);
     instances.push(inst);
 
     if(isBrowser) inst.go();

@@ -19,7 +19,7 @@ var _suppressWarnings = false;
 var instances = [];
 
 var DriftState = function () {
-    function DriftState(el, property, cssState, cssNoState, stateTarget) {
+    function DriftState(el, property, cssState, cssNoState, stateTarget, transitionEndCB) {
         _classCallCheck(this, DriftState);
 
         this.el = el;
@@ -31,6 +31,7 @@ var DriftState = function () {
         this.cssState = cssState;
         this.cssNoState = cssNoState;
         this.uid = getUID();
+        this.transitionEndCB = transitionEndCB;
     }
 
     _createClass(DriftState, [{
@@ -39,7 +40,7 @@ var DriftState = function () {
             var canDrift = supportsTransitions();
             var el = this.el;
 
-            if (canDrift) hanldeTransEnd(el, this.stateTarget, this.cssState, this.property);else this.stateTarget.classList.add(this.cssNoState);
+            if (canDrift) hanldeTransEnd(el, this.stateTarget, this.cssState, this.property, this.transitionEndCB);else this.stateTarget.classList.add(this.cssNoState);
 
             // check the various CSS properties to see if a duration has been set
             var cl = ["transition-duration", "-moz-transition-duration", "-webkit-transition-duration", "-o-transition-duration"];
@@ -105,7 +106,7 @@ function isPropertyFound(property, evt) {
     return true;
 }
 
-function hanldeTransEnd(el, stateTarget, cssState, property) {
+function hanldeTransEnd(el, stateTarget, cssState, property, transitionEndCB) {
     var evtFired = false;
 
     var transitionEventList = whichTransitionEvent();
@@ -125,6 +126,8 @@ function hanldeTransEnd(el, stateTarget, cssState, property) {
             transitionEventList.forEach(function (transitionEvent) {
                 el.removeEventListener(transitionEvent, fun);
             });
+
+            if (transitionEndCB) transitionEndCB(el, stateTarget, cssState, property);
         }
     };
     if (transitionEventList) {
@@ -250,7 +253,7 @@ ds.go = function (opts) {
         if (!_suppressWarnings) console.log(NS, "go", "No 'opts.cssNoState' given, so defaulting to " + DEF_NO_STATE_NAME + ".");
     }
 
-    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget);
+    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB);
     instances.push(inst);
 
     if (isBrowser) inst.go();

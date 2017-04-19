@@ -32,6 +32,7 @@ var DriftState = function () {
         this.cssNoState = cssNoState;
         this.uid = getUID();
         this.transitionEndCB = transitionEndCB;
+        this.clearCssStateWaitTime = clearCssStateWaitTime;
     }
 
     _createClass(DriftState, [{
@@ -61,7 +62,7 @@ var DriftState = function () {
                 // clears the css state after awhile, incase the css transition never happens (the CSS may be incorrectly set)
                 el.to = setTimeout(function () {
                     _this.stateTarget.classList.remove(_this.cssState);
-                }, clearCssStateWaitTime);
+                }, this.clearCssStateWaitTime);
             };
         }
     }]);

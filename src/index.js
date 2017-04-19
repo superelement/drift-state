@@ -24,6 +24,7 @@ class DriftState {
         this.cssNoState = cssNoState;
         this.uid = getUID();
         this.transitionEndCB = transitionEndCB;
+        this.clearCssStateWaitTime = clearCssStateWaitTime;
     }
 
     go() {
@@ -50,7 +51,7 @@ class DriftState {
             // clears the css state after awhile, incase the css transition never happens (the CSS may be incorrectly set)
             el.to = setTimeout(() => {
                 this.stateTarget.classList.remove(this.cssState);
-            }, clearCssStateWaitTime);
+            }, this.clearCssStateWaitTime);
         };
     }
 }

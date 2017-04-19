@@ -19,6 +19,7 @@ The library uses the following features, which you'll need to polyfill if not su
 - `cssState`: {string} (optional): The CSS state name (defaults to `adrift`).
 - `cssNoState`: {string} (optional): The blocking CSS state name, which gets added by browsers that don't support CSS transitions (defaults to `no-drift`).
 - `stateTarget`: {HTMLElement} (optional): An element that you want to attach the CSS states to, if not using `el`. Defaults to using `el`.
+- `clearCssStateWaitTime`: {number} (optional): The amount of milliseconds to wait until clearing wrongly configured CSS states. Defaults to 5000 (5 seconds).
 
 ## Notes
 Inspired by jQuery plugin 'prepareTransition' https://github.com/snookca/prepareTransition

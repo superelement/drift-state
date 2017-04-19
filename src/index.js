@@ -12,7 +12,7 @@ var instances = [];
 
 class DriftState {
 
-    constructor(el, property, cssState, cssNoState, stateTarget, transitionEndCB) {
+    constructor(el, property, cssState, cssNoState, stateTarget, transitionEndCB, clearCssStateWaitTime) {
 
         this.el = el;
         this.stateTarget = stateTarget || el;
@@ -30,7 +30,7 @@ class DriftState {
         var canDrift = supportsTransitions();
         var el = this.el;
 
-        if( canDrift )  hanldeTransEnd(el, this.stateTarget, this.cssState, this.property, this.transitionEndCB)
+        if( canDrift )  handleTransEnd(el, this.stateTarget, this.cssState, this.property, this.transitionEndCB)
         else            this.stateTarget.classList.add(this.cssNoState);
 
         // check the various CSS properties to see if a duration has been set
@@ -40,12 +40,17 @@ class DriftState {
             duration || (duration = parseFloat( window.getComputedStyle(el, itm) ));
         });
 
-        // Should really add delay here as well, right?
+        if (el.to) clearTimeout(el.to);
 
         // if I have a duration then add the class
         if (duration !== 0) {
             if( canDrift ) this.stateTarget.classList.add(this.cssState);
             el.offsetWidth; // check offsetWidth to force the style rendering
+
+            // clears the css state after awhile, incase the css transition never happens (the CSS may be incorrectly set)
+            el.to = setTimeout(() => {
+                this.stateTarget.classList.remove(this.cssState);
+            }, clearCssStateWaitTime);
         };
     }
 }
@@ -93,7 +98,7 @@ function isPropertyFound(property, evt) {
     return true;
 }
 
-function hanldeTransEnd(el, stateTarget, cssState, property, transitionEndCB) {
+function handleTransEnd(el, stateTarget, cssState, property, transitionEndCB) {
     var evtFired = false;
 
     var transitionEventList = whichTransitionEvent();
@@ -241,7 +246,9 @@ ds.go = function(opts) {
             console.log(NS, "go", "No 'opts.cssNoState' given, so defaulting to " + DEF_NO_STATE_NAME + ".");
     }
 
-    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB);
+    if (!opts.clearCssStateWaitTime) opts.clearCssStateWaitTime = 5000;
+
+    var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB, opts.clearCssStateWaitTime);
     instances.push(inst);
 
     if(isBrowser) inst.go();

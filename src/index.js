@@ -3,10 +3,11 @@ const DEF_STATE_NAME = "adrift";
 const DEF_NO_STATE_NAME = "no-drift";
 
 var ds = {};
-var isNode = typeof process === 'object' && process + '' === '[object process]';
+var isNode = !!(typeof module !== 'undefined' && module.exports);
+var isBrowser = typeof window !== "undefined";
 var suppressWarnings = false;
 
-if(!isNode) ds = window[NS] = {};
+if(isBrowser) ds = window[NS] = {};
 
 
 var instances = [];
@@ -257,7 +258,7 @@ ds.go = function(opts) {
     var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB, opts.clearCssStateWaitTime);
     instances.push(inst);
 
-    if(!isNode) inst.go();
+    if(isBrowser) inst.go();
 
     return inst;
 }

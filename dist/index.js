@@ -1,8 +1,8 @@
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -11,10 +11,11 @@ var DEF_STATE_NAME = "adrift";
 var DEF_NO_STATE_NAME = "no-drift";
 
 var ds = {};
-var isNode = (typeof process === "undefined" ? "undefined" : _typeof(process)) === 'object' && process + '' === '[object process]';
+var isNode = !!(typeof module !== 'undefined' && module.exports);
+var isBrowser = typeof window !== "undefined";
 var _suppressWarnings = false;
 
-if (!isNode) ds = window[NS] = {};
+if (isBrowser) ds = window[NS] = {};
 
 var instances = [];
 
@@ -270,7 +271,7 @@ ds.go = function (opts) {
     var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB, opts.clearCssStateWaitTime);
     instances.push(inst);
 
-    if (!isNode) inst.go();
+    if (isBrowser) inst.go();
 
     return inst;
 };

@@ -1,0 +1,77 @@
+<html lang="en-GB">  
+    <head>
+        <title>Drift State Example Parent State</title>
+        <meta charset="utf-8">
+
+        <style>
+            .box {
+                float:left;
+                width: 100px;
+                height: 100px;
+                background-color: #ababab;
+                opacity: 1;
+
+                transition: 0.5s linear;
+                transition-property: opacity, transform;
+                transform-origin: top center;
+                
+                transform: translateY(0%);
+                display: block;
+                
+            }
+
+            .is-down .box {
+                transform: translateY(100px);
+                background-color: red;
+            }
+            
+            .is-gone .box {
+                opacity: 0;
+                display: none;
+            }
+            .box.adrift {
+                display: block !important;
+                background-color: #ababab;
+            }
+            .btn {
+                float:left;
+                clear:left;
+            }
+
+            
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="box"></div>
+        </div>
+        <button class="btn1">Toggle opacity (then display:none)</button>
+        <button class="btn2">Toggle translateY (then change colour)</button>
+
+        <script src="../../dist/index.js"></script>
+        <script>
+            (function() {
+
+                var box = document.querySelector(".box")
+                  , container = document.querySelector(".container")
+                  , btn1 = document.querySelector(".btn1")
+                  , btn2 = document.querySelector(".btn2");
+                
+                btn1.addEventListener("click", function(evt) {
+                    window.driftState.go({
+                        el: box, property: "opacity"
+                    });
+                    container.classList.toggle("is-gone");
+                });
+
+                btn2.addEventListener("click", function(evt) {
+                    window.driftState.go({
+                        el: box, property: "transform"
+                    });
+                    container.classList.toggle("is-down");
+                });
+            })();
+        </script>
+    </body>
+</html>

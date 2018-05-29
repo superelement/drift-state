@@ -1,14 +1,22 @@
 "use strict";
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var NS = "driftState";
 var DEF_STATE_NAME = "adrift";
 var DEF_NO_STATE_NAME = "no-drift";
+
+if ((typeof process === "undefined" ? "undefined" : _typeof(process)) === 'object' && process + '' === '[object process]') {
+    // is node
+    console.log("IS NODE");
+} else {
+    // not node
+    console.log("IS BROWSER");
+}
 
 var ds = {};
 var isBrowser = typeof window !== "undefined";
@@ -175,35 +183,37 @@ function getTransformName() {
 
     var transList = [];
 
-    if (st.getPropertyValue("transform") !== null) {
+    // removed 'null' check because it came in as empty string on chrome android
+
+    if (st.getPropertyValue("transform")) {
         transList.push({
             css: "transform",
             js: "transform"
         });
     }
 
-    if (st.getPropertyValue("-webkit-transform") !== null) {
+    if (st.getPropertyValue("-webkit-transform")) {
         transList.push({
             css: "-webkit-transform",
             js: "webkitTransform"
         });
     }
 
-    if (st.getPropertyValue("-moz-transform") !== null) {
+    if (st.getPropertyValue("-moz-transform")) {
         transList.push({
             css: "-moz-transform",
             js: "MozTransform"
         });
     }
 
-    if (st.getPropertyValue("-ms-transform") !== null) {
+    if (st.getPropertyValue("-ms-transform")) {
         transList.push({
             css: "-ms-transform",
             js: "msTransform"
         });
     }
 
-    if (st.getPropertyValue("-o-transform") !== null) {
+    if (st.getPropertyValue("-o-transform")) {
         transList.push({
             css: "-o-transform",
             js: "OTransform"
@@ -245,6 +255,8 @@ function err(funName, msg, val) {
 // main initializing function. Returns opts, which may have been modified.
 ds.go = function (opts) {
 
+    _suppressWarnings = !opts.showLogs;
+
     // check opts are valid first
     if (!opts) err("go", "'opts' was not defined", opts);
     if (checkEl(opts)) err("go", "'opts.el' was not an HTMLElement", opts.el);
@@ -282,8 +294,7 @@ ds.testable = {
         return DEF_NO_STATE_NAME;
     },
     getUID: getUID
-};
 
-// make available in Common.js
-if (!isBrowser) module.exports = ds;
+    // make available in Common.js
+};if (!isBrowser) module.exports = ds;
 //# sourceMappingURL=index.js.map

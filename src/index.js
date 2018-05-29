@@ -3,10 +3,11 @@ const DEF_STATE_NAME = "adrift";
 const DEF_NO_STATE_NAME = "no-drift";
 
 var ds = {};
-var isBrowser = typeof window !== "undefined";
-if(isBrowser) ds = window[NS] = {};
-
+var isNode = typeof process === 'object' && process + '' === '[object process]';
 var suppressWarnings = false;
+
+if(!isNode) ds = window[NS] = {};
+
 
 var instances = [];
 
@@ -157,40 +158,42 @@ function getTransformName() {
 
     var transList = [];
 
-    if (st.getPropertyValue("transform") !== null) {
-        transList.push({
-          css: "transform", 
-          js: "transform"
-        });
-    }
+    // removed 'null' check because it came in as empty string on chrome android
 
-    if (st.getPropertyValue("-webkit-transform") !== null) {
-        transList.push({
-          css: "-webkit-transform", 
-          js: "webkitTransform"
-        });
-    }
-
-    if (st.getPropertyValue("-moz-transform") !== null) {
-        transList.push({
-          css: "-moz-transform", 
-          js: "MozTransform"
-        });
-    }
-
-    if (st.getPropertyValue("-ms-transform") !== null) {
-        transList.push({
-          css: "-ms-transform", 
-          js: "msTransform"
-        });
-    }
-
-    if (st.getPropertyValue("-o-transform") !== null) {
-        transList.push({
-          css: "-o-transform", 
-          js: "OTransform"
-        });
-    }
+    if (st.getPropertyValue("transform")) { 
+        transList.push({ 
+          css: "transform",  
+          js: "transform" 
+        }); 
+    } 
+ 
+    if (st.getPropertyValue("-webkit-transform")) { 
+        transList.push({ 
+          css: "-webkit-transform",  
+          js: "webkitTransform" 
+        }); 
+    } 
+ 
+    if (st.getPropertyValue("-moz-transform")) { 
+        transList.push({ 
+          css: "-moz-transform",  
+          js: "MozTransform" 
+        }); 
+    } 
+ 
+    if (st.getPropertyValue("-ms-transform")) { 
+        transList.push({ 
+          css: "-ms-transform",  
+          js: "msTransform" 
+        }); 
+    } 
+ 
+    if (st.getPropertyValue("-o-transform")) { 
+        transList.push({ 
+          css: "-o-transform",  
+          js: "OTransform" 
+        }); 
+    } 
 
     if(!transList.length) return null;
     return transList;
@@ -228,6 +231,8 @@ function err(funName, msg, val) {
 
 // main initializing function. Returns opts, which may have been modified.
 ds.go = function(opts) {
+
+    suppressWarnings = !opts.showLogs;
     
     // check opts are valid first
     if(!opts) err("go", "'opts' was not defined", opts);
@@ -252,7 +257,7 @@ ds.go = function(opts) {
     var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB, opts.clearCssStateWaitTime);
     instances.push(inst);
 
-    if(isBrowser) inst.go();
+    if(!isNode) inst.go();
 
     return inst;
 }
@@ -271,4 +276,4 @@ ds.testable = {
 }
 
 // make available in Common.js
-if(!isBrowser) module.exports = ds; 
+if(isNode) module.exports = ds; 

@@ -1,6 +1,6 @@
 {
   "name": "drift-state",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A small JS helper to give your CSS transitions a transitioning (aka drifting) state.",
   "main": "dist/index.js",
   "scripts": {

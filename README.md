@@ -25,6 +25,10 @@ The library uses the following features, which you'll need to polyfill if not su
 
 ## Notes
 Inspired by jQuery plugin 'prepareTransition' https://github.com/snookca/prepareTransition
+Using ES6 or TypeScript
+```
+import * as ds from 'drift-state';
+```
 
 ## Examples
 

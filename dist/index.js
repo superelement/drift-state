@@ -10,19 +10,11 @@ var NS = "driftState";
 var DEF_STATE_NAME = "adrift";
 var DEF_NO_STATE_NAME = "no-drift";
 
-if ((typeof process === "undefined" ? "undefined" : _typeof(process)) === 'object' && process + '' === '[object process]') {
-    // is node
-    console.log("IS NODE");
-} else {
-    // not node
-    console.log("IS BROWSER");
-}
-
 var ds = {};
-var isBrowser = typeof window !== "undefined";
-if (isBrowser) ds = window[NS] = {};
-
+var isNode = (typeof process === "undefined" ? "undefined" : _typeof(process)) === 'object' && process + '' === '[object process]';
 var _suppressWarnings = false;
+
+if (!isNode) ds = window[NS] = {};
 
 var instances = [];
 
@@ -278,7 +270,7 @@ ds.go = function (opts) {
     var inst = new DriftState(opts.el, opts.property, opts.cssState, opts.cssNoState, opts.stateTarget, opts.transitionEndCB, opts.clearCssStateWaitTime);
     instances.push(inst);
 
-    if (isBrowser) inst.go();
+    if (!isNode) inst.go();
 
     return inst;
 };
@@ -296,5 +288,5 @@ ds.testable = {
     getUID: getUID
 
     // make available in Common.js
-};if (!isBrowser) module.exports = ds;
+};if (isNode) module.exports = ds;
 //# sourceMappingURL=index.js.map

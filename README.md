@@ -24,8 +24,8 @@ The library uses the following features, which you'll need to polyfill if not su
 - `transitionEndCB`: {function} (optional): Optionally include a function to call when the transition is complete.
 
 ## Notes
-Inspired by jQuery plugin 'prepareTransition' https://github.com/snookca/prepareTransition
-Using ES6 or TypeScript
+- Inspired by jQuery plugin 'prepareTransition' https://github.com/snookca/prepareTransition
+- Using ES6 or TypeScript
 ```
 import * as ds from 'drift-state';
 ```
